@@ -1,0 +1,129 @@
+sudo apt update
+sudo apt install mongodb
+sudo systemctl start mongodb
+sudo systemctl enable mongodb
+sudo systemctl status mongodb
+press Q to exit status screen 
+
+
+
+mongosh or mongo
+
+Create Database
+--> use UserManagementDB
+
+Create Collection
+--> db.createCollection("users")
+
+Insert One Document (CREATE)
+--> db.users.insertOne({
+  	name: "Rahul",
+  	age: 22,
+  	department: "IT",
+ 	 sales: 5000
+	})
+
+-->Insert Multiple Documents
+	db.users.insertMany([
+	{
+  	name: "Priya",
+  	age: 21,
+  	department: "HR",
+  	sales: 7000
+	},
+	{
+ 	 name: "Amit",
+  	age: 24,
+  	department: "IT",
+  	sales: 9000
+	},
+	{
+ 	 name: "Sneha",
+  	age: 23,
+  	department: "Finance",
+  	sales: 6000
+	}
+	])
+
+-->Read Data (READ)
+-->Show All Documents
+	db.users.find()
+
+-->Pretty Format
+	db.users.find().pretty()
+-->Find IT Department Users
+	db.users.find({ department: "IT" })
+
+-->Update Data (UPDATE)
+	db.users.updateOne(
+  	{ name: "Rahul" },
+ 	 { $set: { sales: 8000 } }
+	)
+
+-->Verify Update
+	db.users.find({ name: "Rahul" })
+
+-->Delete Data (DELETE)
+	db.users.deleteOne({ name: "Sneha" })
+
+-->Verify Delete
+	db.users.find()
+
+-->Aggregation Queries
+-->Aggregation is used for calculations and statistics.
+
+-->Calculate Total Sales
+	db.users.aggregate([
+	{
+  		$group: {
+    		_id: null,
+    		totalSales: { $sum: "$sales" }
+  		}
+	}
+	])
+
+-->Calculate Average Age
+db.users.aggregate([
+{
+  $group: {
+    _id: null,
+    averageAge: { $avg: "$age" }
+  }
+}
+])
+
+
+-->Total Sales by Department
+db.users.aggregate([
+{
+  $group: {
+    _id: "$department",
+    totalSales: { $sum: "$sales" }
+  }
+}
+])
+
+
+
+
+-->Create Index on Name
+db.users.createIndex({ name: 1 })
+
+-->Create Index on Department
+db.users.createIndex({ department: 1 })
+
+
+-->View Indexes
+db.users.getIndexes()
+
+-->Observe Performance
+db.users.find({ name: "Rahul" }).explain("executionStats")
+
+-->Show Databases
+show dbs
+
+-->Show Collections
+show collections
+
+-->Exit MongoDB
+exit

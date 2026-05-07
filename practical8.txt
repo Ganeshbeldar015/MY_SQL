@@ -1,0 +1,39 @@
+CREATE DATABASE StudentDB;
+
+USE StudentDB;
+
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY,
+    student_name VARCHAR(50),
+    department VARCHAR(50)
+);
+
+INSERT INTO Students VALUES
+(101, 'Rahul', 'Computer'),
+(102, 'Priya', 'IT'),
+(103, 'Amit', 'Mechanical');
+
+SELECT * FROM Students;
+
+EXIT;
+
+mysqldump -u root -p StudentDB > student_backup.sql
+
+cat student_backup.sql
+
+DROP DATABASE StudentDB;
+SHOW DATABASES;
+
+CREATE DATABASE StudentDB;
+EXIT;
+
+mysql -u root -p StudentDB < student_backup.sql
+
+
+USE StudentDB;
+
+SHOW TABLES;
+
+SELECT * FROM Students;
+
+EXIT;
