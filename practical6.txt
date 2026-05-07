@@ -1,0 +1,178 @@
+create database practical6;
+use  practical6;
+
+CREATE TABLE Employees (
+    emp_id INT PRIMARY KEY,
+    emp_name VARCHAR(50),
+    department VARCHAR(50),
+    salary DECIMAL(10,2)
+);
+
+CREATE TABLE Employee_Audit (
+    audit_id INT AUTO_INCREMENT PRIMARY KEY,
+    emp_id INT,
+    action_type VARCHAR(20),
+    old_salary DECIMAL(10,2),
+    new_salary DECIMAL(10,2),
+    action_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO Employees VALUES
+(101, 'Rahul Sharma', 'IT', 50000),
+(102, 'Priya Patil', 'HR', 40000),
+(103, 'Amit Joshi', 'IT', 60000),
+(104, 'Sneha Kale', 'Finance', 45000);
+
+SELECT * FROM Employees;
+
+-- //Triggers-- 
+
+DELIMITER //
+
+CREATE TRIGGER trg_employee_insert
+
+AFTER INSERT ON Employees
+
+FOR EACH ROW
+
+BEGIN
+
+INSERT INTO Employee_Audit(
+    emp_id,
+    action_type,
+    old_salary,
+    new_salary
+)
+
+VALUES(
+    NEW.emp_id,
+    'INSERT',
+    NULL,
+    NEW.salary
+);
+
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER trg_employee_update
+
+AFTER UPDATE ON Employees
+
+FOR EACH ROW
+
+BEGIN
+
+INSERT INTO Employee_Audit(
+    emp_id,
+    action_type,
+    old_salary,
+    new_salary
+)
+
+VALUES(
+    OLD.emp_id,
+    'UPDATE',
+    OLD.salary,
+    NEW.salary
+);
+
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER trg_employee_delete
+
+AFTER DELETE ON Employees
+
+FOR EACH ROW
+
+BEGIN
+
+INSERT INTO Employee_Audit(
+    emp_id,
+    action_type,
+    old_salary,
+    new_salary
+)
+
+VALUES(
+    OLD.emp_id,
+    'DELETE',
+    OLD.salary,
+    NULL
+);
+
+END //
+
+DELIMITER ;
+
+INSERT INTO Employees VALUES
+(105, 'Rohit Pawar', 'IT', 55000);
+
+UPDATE Employees
+SET salary = 65000
+WHERE emp_id = 103;
+
+DELETE FROM Employees
+WHERE emp_id = 102;
+
+SELECT * FROM Employee_Audit;
+
+DELIMITER //
+
+CREATE PROCEDURE UpdateITSalary()
+
+BEGIN
+
+DECLARE done INT DEFAULT FALSE;
+
+DECLARE v_emp_id INT;
+
+DECLARE v_salary DECIMAL(10,2);
+
+-- Cursor Declaration
+DECLARE emp_cursor CURSOR FOR
+
+SELECT emp_id, salary
+FROM Employees
+WHERE department = 'IT';
+
+-- Handler
+DECLARE CONTINUE HANDLER
+FOR NOT FOUND SET done = TRUE;
+
+-- Open Cursor
+OPEN emp_cursor;
+
+read_loop: LOOP
+
+-- Fetch Data
+FETCH emp_cursor
+INTO v_emp_id, v_salary;
+
+IF done THEN
+    LEAVE read_loop;
+END IF;
+
+-- Increase Salary by 10%
+UPDATE Employees
+SET salary = salary + (salary * 0.10)
+WHERE emp_id = v_emp_id;
+
+END LOOP;
+
+-- Close Cursor
+CLOSE emp_cursor;
+
+END //
+
+DELIMITER ;
+
+CALL UpdateITSalary();
+
+SELECT * FROM Employees;

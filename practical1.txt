@@ -1,0 +1,51 @@
+create database practical1;
+use practical1;
+create table student (
+	studentID int primary key,
+    name varchar(100) not null,
+    email varchar(100) unique,
+    age int,
+    address Text
+);
+
+create table Instructor(
+	InstructorID  int primary key,
+    name varchar(100) not null,
+    email varchar(100) unique,
+    department varchar(50)
+);
+
+CREATE TABLE Course (
+    CourseID INT PRIMARY KEY,
+    CourseName VARCHAR(100) NOT NULL,
+    Credits INT,
+    InstructorID INT,
+    FOREIGN KEY (InstructorID) REFERENCES Instructor(InstructorID)
+);
+
+CREATE TABLE Enrollment (
+    EnrollmentID INT PRIMARY KEY,
+    StudentID INT,
+    CourseID INT,
+    EnrollmentDate DATE,
+    FOREIGN KEY (StudentID) REFERENCES Student(StudentID),
+    FOREIGN KEY (CourseID) REFERENCES Course(CourseID)
+);
+
+INSERT INTO Student
+VALUES
+(1, 'Rahul', 'rahul@gmail.com', 20, 'Pune');
+
+INSERT INTO Instructor
+VALUES
+(101, 'Dr. Sharma', 'sharma@gmail.com', 'Computer Science');
+
+INSERT INTO Course
+VALUES
+(201, 'Database Management', 4, 101);
+
+INSERT INTO Enrollment
+VALUES
+(301, 1, 201, '2026-05-07');
+
+SHOW TABLES;

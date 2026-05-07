@@ -1,0 +1,143 @@
+CREATE DATABASE practical2;
+
+use practical2;
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    department VARCHAR(50)
+);
+
+CREATE TABLE Courses (
+    course_id INT PRIMARY KEY,
+    course_name VARCHAR(100),
+    credits INT,
+    department VARCHAR(50)
+);
+
+CREATE TABLE Enrollments (
+    enrollment_id INT PRIMARY KEY,
+    student_id INT,
+    course_id INT,
+    grade INT,
+    semester VARCHAR(20),
+
+    FOREIGN KEY (student_id)
+    REFERENCES Students(student_id),
+
+    FOREIGN KEY (course_id)
+    REFERENCES Courses(course_id)
+);
+
+INSERT INTO Students VALUES
+(101, 'Rahul', 'Sharma', 'rahul@gmail.com', 'Computer'),
+(102, 'Priya', 'Patil', 'priya@gmail.com', 'IT'),
+(103, 'Amit', 'Joshi', 'amit@gmail.com', 'Mechanical'),
+(104, 'Sneha', 'Kale', 'sneha@gmail.com', 'Computer'),
+(105, 'Rohit', 'Pawar', 'rohit@gmail.com', 'Civil');
+
+
+INSERT INTO Courses VALUES
+(201, 'Database Management System', 4, 'Computer'),
+(202, 'Operating System', 3, 'Computer'),
+(203, 'Data Structures', 4, 'IT'),
+(204, 'Thermodynamics', 3, 'Mechanical'),
+(205, 'Surveying', 3, 'Civil');
+
+INSERT INTO Enrollments VALUES
+(1, 101, 201, 85, 'Sem-1'),
+(2, 101, 202, 78, 'Sem-1'),
+(3, 102, 203, 88, 'Sem-1'),
+(4, 103, 204, 72, 'Sem-1'),
+(5, 104, 201, 91, 'Sem-1'),
+(6, 105, 205, 69, 'Sem-1');
+
+SELECT * FROM Students;
+SELECT * FROM Courses;
+SELECT * FROM Enrollments;
+
+CREATE VIEW Student_Course_Details AS
+SELECT 
+    s.student_id,
+    s.first_name,
+    s.last_name,
+    c.course_name,
+    e.grade,
+    e.semester
+FROM Students s
+JOIN Enrollments e
+ON s.student_id = e.student_id
+JOIN Courses c
+ON e.course_id = c.course_id;
+
+SELECT * FROM Student_Course_Details;
+
+CREATE VIEW Student_Performance AS
+SELECT 
+    s.student_id,
+    s.first_name,
+    s.last_name,
+    AVG(e.grade) AS average_grade
+FROM Students s
+JOIN Enrollments e
+ON s.student_id = e.student_id
+GROUP BY s.student_id, s.first_name, s.last_name;
+
+SELECT * FROM Student_Performance;
+
+CREATE VIEW Student_Basic_Info AS
+SELECT 
+    student_id,
+    first_name,
+    last_name,
+    email
+FROM Students;
+
+UPDATE Student_Basic_Info
+SET email = 'rahul_new@gmail.com'
+WHERE student_id = 101;
+
+SELECT * FROM Students;
+
+DELETE FROM Student_Basic_Info
+WHERE student_id = 105;
+
+SELECT * FROM Students;
+
+DELETE FROM Enrollments
+WHERE student_id = 105;
+
+DELETE FROM Student_Basic_Info
+WHERE student_id = 105;
+SELECT * FROM Students;
+
+-- Create Indexes-- 
+CREATE INDEX idx_student
+ON Enrollments(student_id);
+
+CREATE INDEX idx_course
+ON Enrollments(course_id);
+
+CREATE INDEX idx_lastname
+ON Students(last_name);
+
+EXPLAIN
+SELECT *
+FROM Enrollments
+WHERE student_id = 101;
+
+SELECT *
+FROM Students
+WHERE last_name = 'Patil';
+
+EXPLAIN
+SELECT 
+    s.first_name,
+    c.course_name,
+    e.grade
+FROM Students s
+JOIN Enrollments e
+ON s.student_id = e.student_id
+JOIN Courses c
+ON e.course_id = c.course_id;

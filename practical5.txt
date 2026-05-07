@@ -1,0 +1,86 @@
+create database practical5;
+
+use practical5;
+
+CREATE TABLE Sales (
+    sale_id INT PRIMARY KEY,
+    product_name VARCHAR(50),
+    quantity INT,
+    price DECIMAL(10,2),
+    sale_date DATE
+);
+
+INSERT INTO Sales VALUES 
+(1, 'Laptop', 2, 55000, '2026-05-01'),
+(2, 'Mouse', 5, 500, '2026-05-02'),
+(3, 'Keyboard', 3, 1500, '2026-05-03');
+
+SELECT * FROM Sales;
+
+
+DELIMITER //
+
+CREATE PROCEDURE AddSale(
+    IN p_sale_id INT,
+    IN p_product_name VARCHAR(50),
+    IN p_quantity INT,
+    IN p_price DECIMAL(10,2),
+    IN p_sale_date DATE
+)
+
+BEGIN
+
+INSERT INTO Sales(
+    sale_id,
+    product_name,
+    quantity,
+    price,
+    sale_date
+)
+
+VALUES(
+    p_sale_id,
+    p_product_name,
+    p_quantity,
+    p_price,
+    p_sale_date
+);
+
+END //
+
+DELIMITER ;
+
+CALL AddSale(
+    4,
+    'Monitor',
+    2,
+    12000,
+    '2026-05-04'
+);
+
+SELECT * FROM Sales;
+
+
+DELIMITER //
+
+CREATE FUNCTION TotalSales()
+
+RETURNS DECIMAL(12,2)
+
+DETERMINISTIC
+
+BEGIN
+
+DECLARE total DECIMAL(12,2);
+
+SELECT SUM(quantity * price)
+INTO total
+FROM Sales;
+
+RETURN total;
+
+END //
+
+DELIMITER ;
+
+SELECT TotalSales() AS Total_Sales;

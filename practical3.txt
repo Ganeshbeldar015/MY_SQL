@@ -1,0 +1,121 @@
+create database practical3;
+
+use practical3;
+
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    age INT,
+    department VARCHAR(50)
+);
+
+CREATE TABLE Courses (
+    course_id INT PRIMARY KEY,
+    course_name VARCHAR(100),
+    instructor VARCHAR(50),
+    credits INT
+);
+
+CREATE TABLE Enrollments (
+    enrollment_id INT PRIMARY KEY,
+    student_id INT,
+    course_id INT,
+    marks INT,
+
+    FOREIGN KEY (student_id)
+    REFERENCES Students(student_id),
+
+    FOREIGN KEY (course_id)
+    REFERENCES Courses(course_id)
+);
+
+INSERT INTO Students VALUES
+(101, 'Rahul', 'Sharma', 20, 'Computer'),
+(102, 'Priya', 'Patil', 21, 'IT'),
+(103, 'Amit', 'Joshi', 19, 'Mechanical'),
+(104, 'Sneha', 'Kale', 22, 'Computer'),
+(105, 'Rohit', 'Pawar', 23, 'Civil');
+
+INSERT INTO Courses VALUES
+(201, 'DBMS', 'Dr. Mehta', 4),
+(202, 'Operating System', 'Dr. Shah', 3),
+(203, 'Data Structures', 'Dr. Mehta', 4),
+(204, 'Thermodynamics', 'Dr. Patil', 3),
+(205, 'Surveying', 'Dr. Kulkarni', 2);
+
+INSERT INTO Enrollments VALUES
+(1, 101, 201, 85),
+(2, 101, 202, 78),
+(3, 102, 203, 88),
+(4, 103, 204, 72),
+(5, 104, 201, 91),
+(6, 105, 205, 69);
+
+
+SELECT *
+FROM Students
+WHERE age > 20;
+
+SELECT *
+FROM Courses
+WHERE instructor = 'Dr. Mehta';
+
+SELECT *
+FROM Students
+WHERE department = 'Computer';
+
+SELECT *
+FROM Enrollments
+WHERE marks > 80;
+
+SELECT *
+FROM Students
+ORDER BY first_name ASC;
+
+SELECT *
+FROM Courses
+ORDER BY credits DESC;
+
+SELECT 
+    course_id,
+    COUNT(student_id) AS total_students
+FROM Enrollments
+GROUP BY course_id;
+
+SELECT 
+    course_id,
+    MAX(marks) AS highest_marks
+FROM Enrollments
+GROUP BY course_id;
+
+SELECT *
+FROM Enrollments
+WHERE marks >
+(
+    SELECT AVG(marks)
+    FROM Enrollments
+);
+
+
+SELECT first_name, last_name
+FROM Students
+WHERE student_id IN
+(
+    SELECT student_id
+    FROM Enrollments
+    WHERE course_id =
+    (
+        SELECT course_id
+        FROM Courses
+        WHERE course_name = 'DBMS'
+    )
+);
+
+SELECT *
+FROM Courses
+WHERE credits =
+(
+    SELECT MAX(credits)
+    FROM Courses
+);

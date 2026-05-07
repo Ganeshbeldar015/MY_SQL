@@ -1,0 +1,76 @@
+create database practical4;
+
+use practical4;
+CREATE TABLE Customers (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(50),
+    city VARCHAR(50)
+);
+
+CREATE TABLE Orders (
+    order_id INT PRIMARY KEY,
+    customer_id INT,
+    product_name VARCHAR(50),
+    amount DECIMAL(10,2)
+);
+
+INSERT INTO Customers VALUES
+(101, 'Rahul Sharma', 'Pune'),
+(102, 'Priya Patil', 'Mumbai'),
+(103, 'Amit Joshi', 'Nashik'),
+(104, 'Sneha Kale', 'Nagpur');
+
+INSERT INTO Orders VALUES
+(1, 101, 'Laptop', 55000),
+(2, 101, 'Mouse', 500),
+(3, 102, 'Mobile', 25000),
+(4, 105, 'Keyboard', 1500),
+(5, 106, 'Monitor', 12000);
+
+SELECT 
+    Customers.customer_id,
+    Customers.customer_name,
+    Orders.order_id,
+    Orders.product_name,
+    Orders.amount
+FROM Customers
+INNER JOIN Orders
+ON Customers.customer_id = Orders.customer_id;
+
+SELECT 
+    Customers.customer_id,
+    Customers.customer_name,
+    Orders.order_id,
+    Orders.product_name
+FROM Customers
+LEFT JOIN Orders
+ON Customers.customer_id = Orders.customer_id;
+
+SELECT 
+    Customers.customer_id,
+    Customers.customer_name,
+    Orders.order_id,
+    Orders.product_name
+FROM Customers
+RIGHT JOIN Orders
+ON Customers.customer_id = Orders.customer_id;
+
+SELECT 
+    Customers.customer_id,
+    Customers.customer_name,
+    Orders.order_id,
+    Orders.product_name
+FROM Customers
+LEFT JOIN Orders
+ON Customers.customer_id = Orders.customer_id
+
+UNION
+
+SELECT 
+    Customers.customer_id,
+    Customers.customer_name,
+    Orders.order_id,
+    Orders.product_name
+FROM Customers
+RIGHT JOIN Orders
+ON Customers.customer_id = Orders.customer_id;
